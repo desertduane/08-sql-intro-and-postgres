@@ -1,9 +1,9 @@
 'use strict';
 
 // DONE: Install and require the NPM Postgres package 'pg' into your server.js, and ensure that it is then listed as a dependency in your package.json
-const pg = require('pg');
 const fs = require('fs');
 const express = require('express');
+const pg = require('pg');
 
 // REVIEW: Require in body-parser for post requests in our server. If you want to know more about what this does, read the docs!
 const bodyParser = require('body-parser');
@@ -16,11 +16,12 @@ const app = express();
 // const conString = 'postgres://USER:PASSWORD@HOST:PORT/DBNAME';
 const conString = 'postgres://localhost:5432';
 
+
 // DONE: Our pg module has a Client constructor that accepts one argument: the conString we just defined.
 //       This is how it knows the URL and, for Windows and Linux users, our username and password for our
 //       database when client.connect is called on line 25. Thus, we need to pass our conString into our
 //       pg.Client() call.
-const client = new pg.Client('conString');
+const client = new pg.Client(conString);
 
 // REVIEW: Use the client object to connect to our DB.
 client.connect();
@@ -61,7 +62,7 @@ app.post('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // Put your response here...
 
-  //This is a query to the database which would be a 3. This is interacting with $.post('/articles', {author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title}) from article.js to post the values inserted by the database. Since this is an INSERT this is the create part of CRUD.
+  //This is a query to the database which would be a 3. This is interacting with Article.insertRecord(). Since this is an INSERT this is the create part of CRUD.
   client.query(
     `INSERT INTO
     articles(title, author, "authorUrl", category, "publishedOn", body)
@@ -88,7 +89,7 @@ app.put('/articles/:id', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // Put your response here...
 
-  //We believe this is a number 4 on the VCM diagram. This code is interacting with the $.ajax() inside updateRecord function in article.js. This is an put/UPDATE which makes it the update portion of CRUD.
+  //We believe this is a number 3,4,5 on the VCM diagram. This code is interacting with the $.ajax() inside updateRecord function in article.js. This is an put/UPDATE which makes it the update portion of CRUD.
   client.query(
     `UPDATE articles
     SET
@@ -117,7 +118,7 @@ app.delete('/articles/:id', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // Put your response here...
 
-  //This would be a 3 in the VCM diagram since it is a query to the server to delete from articles. This code is interacting with the $.ajax() part of the deleteRecord function of article.js. Seeing as this is a delete this would be the destroy portion of CRUD.
+  //This would be a 3,4,5 in the VCM diagram since it is a query to the server to delete from articles. This code is interacting with the $.ajax() part of the deleteRecord function of article.js. Seeing as this is a delete this would be the destroy portion of CRUD.
   client.query(
     `DELETE FROM articles WHERE article_id=$1;`,
     [request.params.id]
@@ -134,7 +135,7 @@ app.delete('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // Put your response here...
 
-  //This would be a 3 in the VCM diagram since it is a query to the server to truncate the table. This code is interacting with the $.ajax() truncateTable function of article.js. This is the destroy/delete portion of CRUD.
+  //This would be a 3,4,5 in the VCM diagram since it is a query to the server to truncate the table. This code is interacting with the $.ajax() truncateTable function of article.js. This is the destroy/delete portion of CRUD.
   client.query(
     'DELETE FROM articles;'
   )
@@ -163,7 +164,7 @@ function loadArticles() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // Put your response here...
 
- //This would be a 3 on the VCM model because it is a query to the database. This piece of code is not interacting with article.js. This code would be a read portion of CRUD because of SELECT COUNT(*) FROM articles. 
+ //This would be a 3 on the VCM model because it is a query to the database. This piece of code is not interacting with article.js. This code would be a create portion of crud.
   client.query('SELECT COUNT(*) FROM articles')
   .then(result => {
     // REVIEW: result.rows is an array of objects that Postgres returns as a response to a query.
